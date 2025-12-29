@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, Globe, Moon, Sun, Volume2, Bell } from 'lucide-react';
+import { Globe, Moon, Sun, Volume2, Bell, Info } from 'lucide-react';
 import { useAppStore } from '../utils/store';
 
 function SettingsPage() {
@@ -10,18 +10,46 @@ function SettingsPage() {
   };
   
   const toggleLanguage = () => {
-    updateSettings({ language: settings.language === 'zh-CN' ? 'en-US' : 'zh-CN' });
+    const newLang = settings.language === 'zh-CN' ? 'en-US' : 'zh-CN';
+    updateSettings({ language: newLang });
+    window.location.reload();
+  };
+  
+  const isEnglish = settings.language === 'en-US';
+  
+  const text = {
+    title: isEnglish ? 'Settings' : '设置',
+    subtitle: isEnglish ? 'Customize your learning experience' : '自定义你的学习体验',
+    appearance: isEnglish ? 'Appearance' : '外观设置',
+    darkMode: isEnglish ? 'Dark Mode' : '深色模式',
+    darkModeDesc: isEnglish ? 'Protect your eyes, suitable for night study' : '保护眼睛，适合夜间学习',
+    interfaceLanguage: isEnglish ? 'Interface Language' : '界面语言',
+    currentLanguage: isEnglish ? 'English' : '简体中文',
+    switchLanguage: isEnglish ? 'Switch Language' : '切换语言',
+    notifications: isEnglish ? 'Notifications' : '通知设置',
+    reviewReminder: isEnglish ? 'Review Reminder' : '复习提醒',
+    reviewReminderDesc: isEnglish ? 'Remind based on forgetting curve' : '根据遗忘曲线提醒复习',
+    soundEffect: isEnglish ? 'Sound Effects' : '音效',
+    soundEffectDesc: isEnglish ? 'Sound prompts when answering questions' : '答题时的提示音',
+    about: isEnglish ? 'About' : '关于',
+    appName: isEnglish ? 'App Name' : '应用名称',
+    appNameValue: isEnglish ? 'Multilingual Learning Assistant' : '多语言学习助手',
+    version: isEnglish ? 'Version' : '版本',
+    supportedLanguages: isEnglish ? 'Supported Languages' : '支持语言',
+    supportedLanguagesValue: isEnglish ? 'Japanese, Spanish, English' : '日语、西班牙语、英语',
+    supportedSubjects: isEnglish ? 'Supported Subjects' : '支持科目',
+    supportedSubjectsValue: isEnglish ? 'Language Learning, Mathematics' : '语言学习、数学'
   };
   
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold mb-1">设置</h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400">自定义你的学习体验</p>
+        <h1 className="text-2xl font-bold mb-1">{text.title}</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{text.subtitle}</p>
       </div>
       
       <div className="card">
-        <h3 className="text-xl font-bold mb-4">外观设置</h3>
+        <h3 className="text-lg font-bold mb-4">{text.appearance}</h3>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -32,9 +60,9 @@ function SettingsPage() {
                 <Moon className="text-blue-500" size={20} />
               )}
               <div>
-                <p className="font-medium">深色模式</p>
+                <p className="font-medium">{text.darkMode}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  保护眼睛，适合夜间学习
+                  {text.darkModeDesc}
                 </p>
               </div>
             </div>
@@ -53,33 +81,33 @@ function SettingsPage() {
             <div className="flex items-center gap-3">
               <Globe className="text-blue-500" size={20} />
               <div>
-                <p className="font-medium">界面语言</p>
+                <p className="font-medium">{text.interfaceLanguage}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {settings.language === 'zh-CN' ? '简体中文' : 'English'}
+                  {text.currentLanguage}
                 </p>
               </div>
             </div>
             <button
               onClick={toggleLanguage}
-              className="btn-secondary"
+              className="btn-secondary text-sm"
             >
-              切换语言
+              {text.switchLanguage}
             </button>
           </div>
         </div>
       </div>
       
       <div className="card">
-        <h3 className="text-xl font-bold mb-4">通知设置</h3>
+        <h3 className="text-lg font-bold mb-4">{text.notifications}</h3>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Bell className="text-primary" size={20} />
               <div>
-                <p className="font-medium">复习提醒</p>
+                <p className="font-medium">{text.reviewReminder}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  根据遗忘曲线提醒复习
+                  {text.reviewReminderDesc}
                 </p>
               </div>
             </div>
@@ -98,9 +126,9 @@ function SettingsPage() {
             <div className="flex items-center gap-3">
               <Volume2 className="text-green-500" size={20} />
               <div>
-                <p className="font-medium">音效</p>
+                <p className="font-medium">{text.soundEffect}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  答题时的提示音
+                  {text.soundEffectDesc}
                 </p>
               </div>
             </div>
@@ -118,23 +146,28 @@ function SettingsPage() {
       </div>
       
       <div className="card">
-        <h3 className="text-xl font-bold mb-4">关于</h3>
-        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-          <p><strong>应用名称：</strong>多语言学习助手</p>
-          <p><strong>版本：</strong>1.0.0</p>
-          <p><strong>技术栈：</strong>React + Vite + Gemini AI</p>
-          <p><strong>支持语言：</strong>日语、西班牙语、英语</p>
-          <p><strong>支持科目：</strong>语言学习、数学</p>
+        <div className="flex items-center gap-2 mb-4">
+          <Info className="text-gray-600 dark:text-gray-400" size={20} />
+          <h3 className="text-lg font-bold">{text.about}</h3>
         </div>
-      </div>
-      
-      <div className="card bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
-        <h4 className="font-bold mb-2 text-yellow-900 dark:text-yellow-100">⚠️ API配置说明</h4>
-        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-          请在项目根目录创建 <code className="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">.env</code> 文件，
-          并添加你的Gemini API密钥：<br/>
-          <code className="bg-yellow-100 dark:bg-yellow-800 px-1 rounded">VITE_GEMINI_API_KEY=your_key_here</code>
-        </p>
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+            <span className="text-gray-600 dark:text-gray-400">{text.appName}:</span>
+            <span className="font-medium text-gray-900 dark:text-white">{text.appNameValue}</span>
+          </div>
+          <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+            <span className="text-gray-600 dark:text-gray-400">{text.version}:</span>
+            <span className="font-medium text-gray-900 dark:text-white">1.0.0</span>
+          </div>
+          <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+            <span className="text-gray-600 dark:text-gray-400">{text.supportedLanguages}:</span>
+            <span className="font-medium text-gray-900 dark:text-white">{text.supportedLanguagesValue}</span>
+          </div>
+          <div className="flex justify-between py-2">
+            <span className="text-gray-600 dark:text-gray-400">{text.supportedSubjects}:</span>
+            <span className="font-medium text-gray-900 dark:text-white">{text.supportedSubjectsValue}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

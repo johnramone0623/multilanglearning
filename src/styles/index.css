@@ -59,6 +59,33 @@ body {
   background: #555;
 }
 
+/* 动画 */
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 /* 自定义工具类 */
 .container-safe {
   padding-left: max(1rem, env(safe-area-inset-left));
