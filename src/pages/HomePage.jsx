@@ -68,8 +68,8 @@ function HomePage({ onNavigate }) {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* 欢迎横幅 */}
-      <div className="card bg-gradient-to-r from-primary to-blue-600 text-white p-8">
-        <h2 className="text-3xl font-bold mb-2">欢迎回来！👋</h2>
+      <div className="card bg-gradient-to-r from-primary to-blue-600 text-white p-6 md:p-8">
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">欢迎回来！👋</h2>
         <p className="text-blue-100">让我们继续你的学习旅程</p>
       </div>
       

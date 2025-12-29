@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Download, Loader, Check, AlertCircle } from 'lucide-react';
+import { FileText, Download, Loader, Check, AlertCircle, Sparkles } from 'lucide-react';
 import { generateQuestions } from '../services/gemini';
 import { generateWorksheetDocx, generateWorksheetWithAnswersDocx } from '../utils/documentExport';
 import { db } from '../utils/database';
@@ -27,20 +27,45 @@ function QuestionGenerator() {
     japanese: ['N5', 'N4', 'N3', 'N2', 'N1'],
     spanish: ['A1', 'A2', 'B1', 'B2'],
     english: ['小学', '初中', '高中'],
-    math: ['小学', '初中', '高中']
+    math: [
+      '小学一年级', '小学二年级', '小学三年级', 
+      '小学四年级', '小学五年级', '小学六年级',
+      '初中一年级', '初中二年级', '初中三年级',
+      '高中一年级', '高中二年级', '高中三年级'
+    ]
   };
   
   const questionTypes = {
-    japanese: ['vocabulary', 'grammar', 'reading', 'listening'],
+    japanese: ['vocabulary', 'grammar', 'reading'],
     spanish: ['vocabulary', 'grammar', 'conversation'],
-    english: ['vocabulary', 'grammar', 'reading', 'writing'],
-    math: ['arithmetic', 'algebra', 'geometry', 'application']
+    english: ['vocabulary', 'grammar', 'reading'],
+    math: ['综合']
+  };
+  
+  const questionTypeLabels = {
+    vocabulary: '词汇',
+    grammar: '语法',
+    reading: '阅读',
+    conversation: '会话',
+    '综合': '综合练习'
   };
   
   const handleGenerate = async () => {
-    if (!formData.subject || (!formData.language && formData.subject !== 'math') || !formData.level) {
-      setError('请填写完整的生成参数');
+    if (!formData.subject) {
+      setError('请选择科目类型');
       return;
+    }
+    
+    if (formData.subject === 'math') {
+      if (!formData.level) {
+        setError('请选择年级');
+        return;
+      }
+    } else {
+      if (!formData.language || !formData.level) {
+        setError('请选择语言和难度级别');
+        return;
+      }
     }
     
     setLoading(true);
@@ -48,11 +73,11 @@ function QuestionGenerator() {
     
     try {
       const result = await generateQuestions({
-        subject: formData.questionType,
+        subject: formData.subject === 'math' ? 'math' : formData.questionType,
         language: formData.language,
         level: formData.level,
         count: parseInt(formData.count),
-        topics: formData.topics ? formData.topics.split(',').map(t => t.trim()) : []
+        topics: formData.topics ? formData.topics.split('，').map(t => t.trim()).filter(t => t) : []
       });
       
       if (result.length === 0) {
@@ -61,7 +86,6 @@ function QuestionGenerator() {
       
       setQuestions(result);
       
-      // 保存到数据库
       for (const q of result) {
         await db.questions.add({
           subject: formData.subject,
@@ -74,7 +98,7 @@ function QuestionGenerator() {
       }
       
     } catch (err) {
-      setError(err.message || '生成失败，请重试');
+      setError(err.message || '生成失败，请检查网络连接和API密钥配置');
       console.error('生成错误:', err);
     } finally {
       setLoading(false);
@@ -83,7 +107,7 @@ function QuestionGenerator() {
   
   const handleExport = async (withAnswers = false) => {
     const metadata = {
-      title: `${formData.language || 'Math'} ${formData.level} 练习题${withAnswers ? '（含答案）' : ''}`,
+      title: `${formData.subject === 'math' ? '数学' : formData.language} ${formData.level} 练习题${withAnswers ? '（含答案）' : ''}`,
       subject: formData.subject,
       language: formData.language,
       level: formData.level
@@ -98,60 +122,59 @@ function QuestionGenerator() {
   
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center gap-3">
-        <FileText className="text-primary" size={32} />
-        <div>
-          <h1 className="text-3xl font-bold">习题生成器</h1>
-          <p className="text-gray-600 dark:text-gray-400">使用AI生成个性化练习题</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold mb-1">习题生成器</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">使用AI生成个性化练习题</p>
       </div>
       
-      {/* 生成表单 */}
       <div className="card">
-        <h3 className="text-xl font-bold mb-4">生成参数</h3>
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles className="text-primary" size={20} />
+          <h3 className="text-lg font-bold">生成参数</h3>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* 科目选择 */}
           <div>
-            <label className="block text-sm font-medium mb-2">科目类型</label>
+            <label className="block text-sm font-medium mb-2">科目类型 *</label>
             <select
               value={formData.subject}
               onChange={(e) => {
-                setFormData({ ...formData, subject: e.target.value, language: '', level: '' });
+                setFormData({ ...formData, subject: e.target.value, language: '', level: '', questionType: 'vocabulary' });
                 setQuestions([]);
+                setError('');
               }}
               className="input-field"
             >
-              <option value="">请选择科目</option>
-              <option value="language">语言学习</option>
-              <option value="math">数学</option>
+              <option value="">-- 请选择科目 --</option>
+              <option value="language">📚 语言学习</option>
+              <option value="math">🔢 数学</option>
             </select>
           </div>
           
-          {/* 语言选择 (仅语言学习) */}
           {formData.subject === 'language' && (
             <div>
-              <label className="block text-sm font-medium mb-2">语言</label>
+              <label className="block text-sm font-medium mb-2">语言 *</label>
               <select
                 value={formData.language}
                 onChange={(e) => {
-                  setFormData({ ...formData, language: e.target.value, level: '' });
+                  setFormData({ ...formData, language: e.target.value, level: '', questionType: 'vocabulary' });
                   setQuestions([]);
                 }}
                 className="input-field"
               >
-                <option value="">请选择语言</option>
-                <option value="japanese">日语 🇯🇵</option>
-                <option value="spanish">西班牙语 🇪🇸</option>
-                <option value="english">英语 🇺🇸</option>
+                <option value="">-- 请选择语言 --</option>
+                <option value="japanese">🇯🇵 日语</option>
+                <option value="spanish">🇪🇸 西班牙语</option>
+                <option value="english">🇺🇸 英语</option>
               </select>
             </div>
           )}
           
-          {/* 难度级别 */}
           {(formData.language || formData.subject === 'math') && (
-            <div>
-              <label className="block text-sm font-medium mb-2">难度级别</label>
+            <div className={formData.subject === 'language' ? 'md:col-span-2' : ''}>
+              <label className="block text-sm font-medium mb-2">
+                {formData.subject === 'math' ? '年级' : '难度级别'} *
+              </label>
               <select
                 value={formData.level}
                 onChange={(e) => {
@@ -160,7 +183,7 @@ function QuestionGenerator() {
                 }}
                 className="input-field"
               >
-                <option value="">请选择级别</option>
+                <option value="">-- 请选择{formData.subject === 'math' ? '年级' : '级别'} --</option>
                 {levels[formData.language || 'math']?.map(level => (
                   <option key={level} value={level}>{level}</option>
                 ))}
@@ -168,7 +191,6 @@ function QuestionGenerator() {
             </div>
           )}
           
-          {/* 题目类型 */}
           {formData.language && (
             <div>
               <label className="block text-sm font-medium mb-2">题目类型</label>
@@ -179,44 +201,39 @@ function QuestionGenerator() {
               >
                 {questionTypes[formData.language]?.map(type => (
                   <option key={type} value={type}>
-                    {type === 'vocabulary' ? '词汇' :
-                     type === 'grammar' ? '语法' :
-                     type === 'reading' ? '阅读' :
-                     type === 'listening' ? '听力' :
-                     type === 'conversation' ? '会话' :
-                     type === 'writing' ? '写作' : type}
+                    {questionTypeLabels[type]}
                   </option>
                 ))}
               </select>
             </div>
           )}
           
-          {/* 题目数量 */}
           <div>
             <label className="block text-sm font-medium mb-2">题目数量</label>
             <input
               type="number"
               min="1"
-              max="50"
+              max="20"
               value={formData.count}
               onChange={(e) => setFormData({ ...formData, count: e.target.value })}
               className="input-field"
             />
           </div>
           
-          {/* 知识点 (可选) */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-2">
-              特定知识点 <span className="text-gray-500">(可选，多个用逗号分隔)</span>
-            </label>
-            <input
-              type="text"
-              value={formData.topics}
-              onChange={(e) => setFormData({ ...formData, topics: e.target.value })}
-              placeholder="例如：助词、动词变形、过去时"
-              className="input-field"
-            />
-          </div>
+          {(formData.language || formData.subject === 'math') && (
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-2">
+                特定知识点 <span className="text-gray-500 text-xs">(可选，用中文逗号分隔)</span>
+              </label>
+              <input
+                type="text"
+                value={formData.topics}
+                onChange={(e) => setFormData({ ...formData, topics: e.target.value })}
+                placeholder={formData.subject === 'math' ? '例如：加减法，分数运算' : '例如：助词，动词变形'}
+                className="input-field"
+              />
+            </div>
+          )}
         </div>
         
         {error && (
@@ -234,69 +251,89 @@ function QuestionGenerator() {
           {loading ? (
             <>
               <Loader className="animate-spin mr-2" size={18} />
-              生成中...
+              AI生成中...
             </>
           ) : (
             <>
-              <FileText className="mr-2" size={18} />
+              <Sparkles className="mr-2" size={18} />
               生成习题
             </>
           )}
         </button>
       </div>
       
-      {/* 生成结果 */}
       {questions.length > 0 && (
         <div className="card">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
             <div className="flex items-center gap-2">
               <Check className="text-green-500" size={24} />
-              <h3 className="text-xl font-bold">已生成 {questions.length} 道题</h3>
+              <h3 className="text-lg font-bold">已生成 {questions.length} 道题</h3>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => handleExport(false)}
-                className="btn-secondary text-sm"
+                className="btn-secondary text-sm flex items-center gap-1"
               >
-                <Download size={16} className="mr-1" />
+                <Download size={16} />
                 导出试卷
               </button>
               <button
                 onClick={() => handleExport(true)}
-                className="btn-primary text-sm"
+                className="btn-primary text-sm flex items-center gap-1"
               >
-                <Download size={16} className="mr-1" />
+                <Download size={16} />
                 导出答案版
               </button>
             </div>
           </div>
           
-          <div className="space-y-4 max-h-96 overflow-y-auto">
+          <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
             {questions.map((q, index) => (
-              <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <p className="font-medium mb-2">
-                  <span className="text-primary">{index + 1}.</span> {q.question}
+              <div key={index} className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
+                <p className="font-medium mb-3 flex items-start gap-2">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white text-sm font-bold flex-shrink-0">
+                    {index + 1}
+                  </span>
+                  <span className="flex-1">{q.question}</span>
                 </p>
                 
                 {q.options && (
-                  <div className="ml-6 space-y-1 mb-2">
+                  <div className="ml-9 space-y-1.5 mb-3">
                     {q.options.map((opt, i) => (
-                      <p key={i} className="text-sm text-gray-700 dark:text-gray-300">
-                        {String.fromCharCode(65 + i)}. {opt}
-                      </p>
+                      <div key={i} className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-2 rounded">
+                        <span className="font-semibold text-primary">{String.fromCharCode(65 + i)}.</span> {opt}
+                      </div>
                     ))}
                   </div>
                 )}
                 
-                <div className="ml-6 mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
-                  <p className="text-sm">
-                    <span className="font-medium text-green-600 dark:text-green-400">答案：</span>
-                    {q.answer}
+                <div className="ml-9 mt-3 pt-3 border-t border-gray-300 dark:border-gray-600 space-y-2">
+                  <p className="text-sm flex items-start gap-2">
+                    <span className="font-semibold text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <Check size={16} /> 答案：
+                    </span>
+                    <span className="flex-1 font-medium text-gray-800 dark:text-gray-200">{q.answer}</span>
                   </p>
                   {q.explanation && (
-                    <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">
-                      <span className="font-medium">解析：</span>
-                      {q.explanation}
+                    <p className="text-sm flex items-start gap-2">
+                      <span className="font-semibold text-blue-600 dark:text-blue-400">💡 解析：</span>
+                      <span className="flex-1 text-gray-600 dark:text-gray-400">{q.explanation}</span>
+                    </p>
+                  )}
+                  {q.steps && (
+                    <div className="text-sm">
+                      <span className="font-semibold text-purple-600 dark:text-purple-400">📝 步骤：</span>
+                      <ol className="list-decimal list-inside text-gray-600 dark:text-gray-400 ml-4 mt-1 space-y-1">
+                        {q.steps.map((step, i) => (
+                          <li key={i}>{step}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+                  {q.knowledgePoint && (
+                    <p className="text-sm flex items-start gap-2">
+                      <span className="font-semibold text-orange-600 dark:text-orange-400">🎯 知识点：</span>
+                      <span className="flex-1 text-gray-600 dark:text-gray-400">{q.knowledgePoint}</span>
                     </p>
                   )}
                 </div>

@@ -15,12 +15,9 @@ function SettingsPage() {
   
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center gap-3">
-        <Settings className="text-primary" size={32} />
-        <div>
-          <h1 className="text-3xl font-bold">设置</h1>
-          <p className="text-gray-600 dark:text-gray-400">自定义你的学习体验</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold mb-1">设置</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">自定义你的学习体验</p>
       </div>
       
       <div className="card">

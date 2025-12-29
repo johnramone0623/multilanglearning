@@ -4,15 +4,17 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
-// API配置 - 使用最新的Flash模型
+// API配置 - 使用最新的Gemini 3模型
 const API_CONFIG = {
   'flash': {
-    endpoint: `${GEMINI_API_BASE}/gemini-flash:generateContent`,
+    // Gemini 3 Flash Preview - 最新最强的Flash模型（Pro级智能，Flash级速度）
+    endpoint: `${GEMINI_API_BASE}/gemini-3-flash-preview:generateContent`,
     rateLimit: 15, // 每分钟15次
     maxTokens: 8192
   },
   'pro': {
-    endpoint: `${GEMINI_API_BASE}/gemini-pro:generateContent`,
+    // Gemini 2.5 Pro - 稳定的Pro模型作为备用
+    endpoint: `${GEMINI_API_BASE}/gemini-2.5-pro:generateContent`,
     rateLimit: 15,
     maxTokens: 8192
   }

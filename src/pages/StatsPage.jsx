@@ -26,12 +26,9 @@ function StatsPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <BarChart3 className="text-primary" size={32} />
-          <div>
-            <h1 className="text-3xl font-bold">学习统计</h1>
-            <p className="text-gray-600 dark:text-gray-400">查看你的学习进度和表现</p>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold mb-1">学习统计</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">查看你的学习进度和表现</p>
         </div>
         
         <select
