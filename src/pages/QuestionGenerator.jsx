@@ -129,7 +129,7 @@ function QuestionGenerator() {
       
       <div className="card">
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="text-primary" size={20} />
+          <Sparkles className="text-coral" size={20} />
           <h3 className="text-lg font-bold">生成参数</h3>
         </div>
         
@@ -291,7 +291,7 @@ function QuestionGenerator() {
             {questions.map((q, index) => (
               <div key={index} className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
                 <p className="font-medium mb-3 flex items-start gap-2">
-                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white text-sm font-bold flex-shrink-0">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-coral to-orange-400 text-white text-sm font-bold flex-shrink-0">
                     {index + 1}
                   </span>
                   <span className="flex-1">{q.question}</span>
@@ -301,7 +301,7 @@ function QuestionGenerator() {
                   <div className="ml-9 space-y-1.5 mb-3">
                     {q.options.map((opt, i) => (
                       <div key={i} className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-2 rounded">
-                        <span className="font-semibold text-primary">{String.fromCharCode(65 + i)}.</span> {opt}
+                        <span className="font-semibold text-coral">{String.fromCharCode(65 + i)}.</span> {opt}
                       </div>
                     ))}
                   </div>

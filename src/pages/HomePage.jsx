@@ -60,7 +60,7 @@ function HomePage({ onNavigate }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral"></div>
       </div>
     );
   }
@@ -68,9 +68,9 @@ function HomePage({ onNavigate }) {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* 欢迎横幅 */}
-      <div className="card bg-gradient-to-r from-primary to-blue-600 text-white p-6 md:p-8">
+      <div className="card bg-gradient-to-r from-coral to-orange-400 text-white p-6 md:p-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">欢迎回来！👋</h2>
-        <p className="text-blue-100">让我们继续你的学习旅程</p>
+        <p className="text-orange-100">让我们继续你的学习旅程</p>
       </div>
       
       {/* 今日任务 */}
@@ -136,10 +136,10 @@ function HomePage({ onNavigate }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="card">
               <div className="flex items-center gap-3 mb-2">
-                <Clock className="text-primary" size={20} />
+                <Clock className="text-coral" size={20} />
                 <span className="text-sm text-gray-600 dark:text-gray-400">学习时长</span>
               </div>
-              <p className="text-3xl font-bold text-primary">
+              <p className="text-3xl font-bold text-coral">
                 {Math.round(stats.totalDuration / 60)}
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">分钟</span>
               </p>
@@ -172,7 +172,7 @@ function HomePage({ onNavigate }) {
       
       {/* 学习建议 */}
       <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-        <h4 className="font-bold mb-2 text-blue-900 dark:text-blue-100">💡 学习小贴士</h4>
+        <h4 className="font-bold mb-2 text-blue-900 dark:text-orange-100">💡 学习小贴士</h4>
         <p className="text-sm text-blue-800 dark:text-blue-200">
           每天复习15-30分钟比一次性学习几小时效果更好。根据艾宾浩斯遗忘曲线，及时复习能提高记忆效率80%以上！
         </p>

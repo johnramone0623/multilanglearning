@@ -18,7 +18,7 @@ function StatsPage() {
   if (!stats) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral"></div>
       </div>
     );
   }
@@ -45,7 +45,7 @@ function StatsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="card">
           <h3 className="text-sm text-gray-600 dark:text-gray-400 mb-2">总学习时长</h3>
-          <p className="text-3xl font-bold text-primary">
+          <p className="text-3xl font-bold text-coral">
             {Math.round(stats.totalDuration / 60)}
             <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">分钟</span>
           </p>
